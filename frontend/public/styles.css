@@ -1036,31 +1036,10 @@ body.dark-mode .loading-spinner {
     border-radius: 8px;
     display: inline-block;
     width: fit-content;
-}
-
-/* Transport when not connected - match modality-none styling */
-.session-transport:not(.jsonrpc):not(.http_json):not(.grpc) {
-    font-weight: normal;
-    font-style: italic;
-    color: #9ca3af;
-    padding: 0;
-    background-color: transparent;
-}
-
-.session-transport.jsonrpc {
     background-color: #e0f2fe;
     color: #0c4a6e;
 }
 
-.session-transport.http_json {
-    background-color: #dcfce7;
-    color: #14532d;
-}
-
-.session-transport.grpc {
-    background-color: #f3e8ff;
-    color: #581c87;
-}
 
 .session-context-id {
     background-color: #f7f7f7;

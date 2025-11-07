@@ -69,31 +69,6 @@ templates = Jinja2Templates(directory='../frontend/public')
 # a more robust state management solution (e.g., Redis) would be required.
 clients: dict[str, tuple[httpx.AsyncClient, Client, AgentCard, str]] = {}
 
-
-# ==============================================================================
-# Helper Functions
-# ==============================================================================
-
-
-def normalize_transport_protocol(transport: str | None) -> str:
-    """Normalizes transport protocol string to SDK format."""
-    if not transport:
-        return TransportProtocol.jsonrpc
-
-    normalized = transport.lower().replace('+', '+').replace('-', '')
-
-    transport_map = {
-        'http+json': TransportProtocol.http_json,
-        'httpjson': TransportProtocol.http_json,
-        'rest': TransportProtocol.http_json,
-        'jsonrpc': TransportProtocol.jsonrpc,
-        'json-rpc': TransportProtocol.jsonrpc,
-        'grpc': TransportProtocol.grpc,
-    }
-
-    return transport_map.get(normalized, TransportProtocol.jsonrpc)
-
-
 # ==============================================================================
 # Socket.IO Event Helpers
 # ==============================================================================
@@ -289,9 +264,6 @@ async def handle_initialize_client(sid: str, data: dict[str, Any]) -> None:
         card_resolver = get_card_resolver(httpx_client, agent_card_url)
         card = await card_resolver.get_agent_card()
 
-        preferred_transport = getattr(card, 'preferred_transport', None)
-        transport_protocol = normalize_transport_protocol(preferred_transport)
-
         client_config = ClientConfig(
             supported_transports=[
                 TransportProtocol.jsonrpc,
@@ -302,6 +274,9 @@ async def handle_initialize_client(sid: str, data: dict[str, Any]) -> None:
         )
         factory = ClientFactory(client_config)
         a2a_client = factory.create(card)
+        transport_protocol = (
+            card.preferred_transport or TransportProtocol.jsonrpc
+        )
 
         clients[sid] = (httpx_client, a2a_client, card, transport_protocol)
 

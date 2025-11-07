@@ -664,12 +664,9 @@ document.addEventListener('DOMContentLoaded', () => {
           'session-transport',
         ) as HTMLElement;
         if (data.transport && sessionTransport) {
-          const transportLabel = data.transport.replace('_', '+').toUpperCase();
-          sessionTransport.textContent = transportLabel;
-          sessionTransport.className = `session-transport ${data.transport}`;
+          sessionTransport.textContent = data.transport;
         } else if (sessionTransport) {
           sessionTransport.textContent = 'Unknown';
-          sessionTransport.className = 'session-transport';
         }
 
         // Update modalities display in Session Details
