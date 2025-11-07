@@ -218,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Generic function to setup toggle functionality
   function setupToggle(
     toggleElement: HTMLElement,
     contentElement: HTMLElement,
@@ -233,7 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Setup toggle functionality for both sections
   setupToggle(httpHeadersToggle, httpHeadersContent);
   setupToggle(messageMetadataToggle, messageMetadataContent);
 
@@ -245,13 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
   ) as HTMLElement;
   setupToggle(sessionDetailsToggle, sessionDetailsContent);
 
-  // Add a new, empty header field when the button is clicked
   addHeaderBtn.addEventListener('click', () => addHeaderField());
-
-  // Add a new, empty metadata field when the button is clicked
   addMetadataBtn.addEventListener('click', () => addMetadataField());
 
-  // Generic function to setup remove item event listeners
   function setupRemoveItemListener(
     listElement: HTMLElement,
     removeBtnSelector: string,
@@ -267,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Setup remove item listeners
   setupRemoveItemListener(headersList, '.remove-header-btn', '.header-item');
   setupRemoveItemListener(
     metadataList,
@@ -275,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
     '.metadata-item',
   );
 
-  // File attachment functions
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B';
     const k = 1024;
@@ -396,19 +388,16 @@ document.addEventListener('DOMContentLoaded', () => {
     fileInput.value = ''; // Reset file input
   };
 
-  // Attach button click handler
   attachBtn.addEventListener('click', () => {
     fileInput.click();
   });
 
-  // File input change handler
   fileInput.addEventListener('change', () => {
     if (fileInput.files && fileInput.files.length > 0) {
       void handleFileSelection(fileInput.files);
     }
   });
 
-  // Generic function to add key-value fields
   function addKeyValueField(
     list: HTMLElement,
     classes: {item: string; key: string; value: string; removeBtn: string},
@@ -427,7 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
     list.insertAdjacentHTML('beforeend', itemHTML);
   }
 
-  // Function to add a new header field
   function addHeaderField(name = '', value = '') {
     addKeyValueField(
       headersList,
@@ -444,7 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
-  // Function to add a new metadata field
   function addMetadataField(key = '', value = '') {
     addKeyValueField(
       metadataList,
@@ -461,7 +448,6 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
-  // Generic function to collect key-value pairs from the DOM
   function getKeyValuePairs(
     list: HTMLElement,
     itemSelector: string,
@@ -486,7 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
-  // Function to collect all headers
   function getCustomHeaders(): Record<string, string> {
     return getKeyValuePairs(
       headersList,
@@ -496,7 +481,6 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
-  // Function to collect all metadata
   function getMessageMetadata(): Record<string, string> {
     return getKeyValuePairs(
       metadataList,
@@ -573,10 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chatInput.disabled = true;
     sendBtn.disabled = true;
 
-    // Get custom headers
     const customHeaders = getCustomHeaders();
-
-    // Prepare request headers
     const requestHeaders = {
       'Content-Type': 'application/json',
       ...customHeaders,
@@ -682,7 +663,6 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   );
 
-  // Helper function to get icon for MIME type
   const getModalityIcon = (mimeType: string): string => {
     if (mimeType.startsWith('image/')) return '🖼️';
     if (mimeType.startsWith('audio/')) return '🎵';
@@ -692,7 +672,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return '📎';
   };
 
-  // Update modalities display in Session Details
   const updateModalitiesDisplay = () => {
     const inputModesEl = document.getElementById('session-input-modes');
     const outputModesEl = document.getElementById('session-output-modes');
@@ -720,7 +699,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Update session UI based on current contextId and connection state
   const updateSessionUI = () => {
     const sessionDetails = document.getElementById(
       'session-details',
@@ -758,7 +736,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Reset session to start fresh
   const resetSession = () => {
     contextId = null;
     chatMessages.innerHTML =
@@ -828,7 +805,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') sendMessage();
   });
 
-  // Helper function to render multimedia content from file URI or base64 data
   const renderMultimediaContent = (uri: string, mimeType: string): string => {
     const sanitizedUri = DOMPurify.sanitize(uri);
     const sanitizedMimeType = DOMPurify.sanitize(mimeType);
@@ -848,13 +824,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Helper function to render base64 encoded data
   const renderBase64Data = (base64Data: string, mimeType: string): string => {
     const dataUri = `data:${mimeType};base64,${base64Data}`;
     return renderMultimediaContent(dataUri, mimeType);
   };
 
-  // Helper function to process a part and return its rendered content
   const processPart = (p: any): string | null => {
     if (p.text) {
       return DOMPurify.sanitize(marked.parse(p.text) as string);

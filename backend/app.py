@@ -268,7 +268,7 @@ async def handle_initialize_client(sid: str, data: dict[str, Any]) -> None:
         card_resolver = get_card_resolver(httpx_client, agent_card_url)
         card = await card_resolver.get_agent_card()
 
-        client_config = ClientConfig(
+        a2a_config = ClientConfig(
             supported_transports=[
                 TransportProtocol.jsonrpc,
                 TransportProtocol.http_json,
@@ -276,7 +276,7 @@ async def handle_initialize_client(sid: str, data: dict[str, Any]) -> None:
             use_client_preference=True,
             httpx_client=httpx_client,
         )
-        factory = ClientFactory(client_config)
+        factory = ClientFactory(a2a_config)
         a2a_client = factory.create(card)
         transport_protocol = (
             card.preferred_transport or TransportProtocol.jsonrpc
