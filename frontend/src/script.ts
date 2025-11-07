@@ -1083,7 +1083,6 @@ document.addEventListener('DOMContentLoaded', () => {
       messageContent.textContent = content;
     }
 
-    // Only append message content if there's actual text
     if (content.trim()) {
       messageElement.appendChild(messageContent);
     }

@@ -391,7 +391,7 @@ body.dark-mode input:checked + .slider {
     cursor: not-allowed;
 }
 
-/* File Attachment UI */
+/* Multimodal UI Support */
 .chat-input-wrapper {
     margin-top: 10px;
 }

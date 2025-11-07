@@ -69,6 +69,7 @@ templates = Jinja2Templates(directory='../frontend/public')
 # a more robust state management solution (e.g., Redis) would be required.
 clients: dict[str, tuple[httpx.AsyncClient, Client, AgentCard, str]] = {}
 
+
 # ==============================================================================
 # Socket.IO Event Helpers
 # ==============================================================================
@@ -94,11 +95,14 @@ async def _process_a2a_response(
     correlating it with the original request using the session ID and request ID.
 
     Args:
-        client_event: The event or message received.
-        sid: The session ID associated with the original request.
-        request_id: The unique ID of the original request.
+    client_event: The event or message received.
+    sid: The session ID associated with the original request.
+    request_id: The unique ID of the original request.
     """
-    # Extract the event from the ClientEvent tuple or use the Message directly
+    # The response payload 'event' (Task, Message, etc.) may have its own 'id',
+    # which can differ from the JSON-RPC request/response 'id'. We prioritize
+    # the payload's ID for client-side correlation if it exists.
+
     event: TaskStatusUpdateEvent | TaskArtifactUpdateEvent | Task | Message
     if isinstance(client_event, tuple):
         event = client_event[1] if client_event[1] else client_event[0]
@@ -280,7 +284,6 @@ async def handle_initialize_client(sid: str, data: dict[str, Any]) -> None:
 
         clients[sid] = (httpx_client, a2a_client, card, transport_protocol)
 
-        # Extract supported modalities from agent card
         input_modes = getattr(card, 'default_input_modes', ['text/plain'])
         output_modes = getattr(card, 'default_output_modes', ['text/plain'])
 
