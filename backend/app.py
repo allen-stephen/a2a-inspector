@@ -354,12 +354,13 @@ async def handle_send_message(sid: str, json_data: dict[str, Any]) -> None:
         parts.append(TextPart(text=str(message_text)))  # type: ignore[arg-type]
 
     for attachment in attachments:
-        parts.append(FilePart(  # type: ignore[arg-type]
-            file=FileWithBytes(
-                bytes=attachment['data'],
-                mime_type=attachment['mimeType']
+        parts.append(
+            FilePart(  # type: ignore[arg-type]
+                file=FileWithBytes(
+                    bytes=attachment['data'], mime_type=attachment['mimeType']
+                )
             )
-        ))
+        )
 
     message = Message(
         role=Role.user,
@@ -391,15 +392,21 @@ async def handle_send_message(sid: str, json_data: dict[str, Any]) -> None:
                 result_dict = stream_result.model_dump(exclude_none=True)
 
             # Skip task updates with only previously-seen artifacts
-            if result_dict.get('kind') == 'task' and result_dict.get('artifacts'):
+            if result_dict.get('kind') == 'task' and result_dict.get(
+                'artifacts'
+            ):
                 current_artifact_ids = {
                     artifact.get('artifactId')
                     for artifact in result_dict.get('artifacts', [])
                     if artifact.get('artifactId')
                 }
 
-                if current_artifact_ids and current_artifact_ids.issubset(seen_artifact_ids):
-                    logger.info(f'Skipping duplicate task update with same artifacts: {current_artifact_ids}')
+                if current_artifact_ids and current_artifact_ids.issubset(
+                    seen_artifact_ids
+                ):
+                    logger.info(
+                        f'Skipping duplicate task update with same artifacts: {current_artifact_ids}'
+                    )
                     continue
 
                 seen_artifact_ids.update(current_artifact_ids)
